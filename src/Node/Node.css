@@ -3,3 +3,7 @@
     width: 20px;
     border: 1px solid black;
 }
+
+.true {
+    background-color: green;
+}
