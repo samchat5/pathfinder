@@ -1,16 +1,6 @@
 const closestNode = (distances, visited) => {
     // Default closest node = null
     let shortest = null;
-    /*
-    for (let node = 0; node < Object.keys(distances).length; node += 1) {
-        const isShortest =
-            shortest === null || distances[node] < distances[shortest];
-        // If the node isShortest and has not been visited, set shortest equal to the node
-        if (isShortest && !visited.includes(node)) {
-            shortest = node;
-        }
-    }
-    */
     Object.keys(distances).forEach((node) => {
         const isShortest =
             shortest === null || distances[node] < distances[shortest];

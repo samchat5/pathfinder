@@ -1,0 +1,7 @@
+.Graph-Button {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+}

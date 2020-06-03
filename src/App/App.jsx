@@ -1,10 +1,9 @@
-/* eslint-disable jsx-a11y/mouse-events-have-key-events, jsx-a11y/control-has-associated-label */
-
 import React from "react";
 import Node from "../Node/Node";
 import "./App.css";
-// import toGraph from "../util/toGraph";
-// import dijkstras from "../util/dijkstra";
+import toGraph from "../util/toGraph";
+import dijkstras from "../util/dijkstra";
+import ControlPanel from "../ControlPanel/ControlPanel";
 
 const createNode = (col, row) => {
     return {
@@ -28,18 +27,37 @@ const getInitialNodes = () => {
     return nodes;
 };
 
-const graphWithAddedWall = (nodes, row, col) => {
+const graphWithAddedRemovedWall = (nodes, row, col) => {
     const newNodes = nodes;
-    newNodes[row - 1][col - 1].isWall = true;
+    newNodes[row - 1][col - 1].isWall = !newNodes[row - 1][col - 1].isWall;
+    return newNodes;
+};
+
+const graphWithAddedPath = (nodes, path) => {
+    const newNodes = nodes;
+    for (let i = 0; i < 20; i += 1) {
+        for (let j = 0; j < 20; j += 1) {
+            if (path.includes(nodes[i][j].name)) {
+                newNodes[i][j].isPath = true;
+            } else {
+                newNodes[i][j].isPath = false;
+            }
+        }
+    }
     return newNodes;
 };
 
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { nodes: [], isMouseDown: false };
+        this.state = {
+            nodes: [],
+            isMouseDown: false,
+        };
         this.handleOnMouseDown = this.handleOnMouseDown.bind(this);
+        this.handleOnMouseEnter = this.handleOnMouseEnter.bind(this);
         this.handleOnMouseUp = this.handleOnMouseUp.bind(this);
+        this.visualize = this.visualize.bind(this);
     }
 
     componentDidMount() {
@@ -47,14 +65,22 @@ class App extends React.Component {
         this.setState({ nodes });
     }
 
-    componentDidUpdate() {
-        /* TO DO */
+    visualize(rowStart, colStart, rowEnd, colEnd) {
+        const { nodes } = this.state;
+        const graph = toGraph(nodes);
+        const path = dijkstras(
+            graph,
+            `col${colStart}row${rowStart}`,
+            `col${colEnd}row${rowEnd}`
+        );
+        const newNodes = graphWithAddedPath(nodes, path);
+        this.setState({ nodes: newNodes, isMouseDown: false });
     }
 
     handleOnMouseDown(row, col) {
         const { nodes } = this.state;
         this.setState({ isMouseDown: true });
-        const newNodes = graphWithAddedWall(nodes, row, col);
+        const newNodes = graphWithAddedRemovedWall(nodes, row, col);
         this.setState({ nodes: newNodes });
     }
 
@@ -65,16 +91,29 @@ class App extends React.Component {
     handleOnMouseEnter(row, col) {
         const { isMouseDown, nodes } = this.state;
         if (isMouseDown) {
-            const newNodes = graphWithAddedWall(nodes, row, col);
+            const newNodes = graphWithAddedRemovedWall(nodes, row, col);
             this.setState({ nodes: newNodes });
         }
+    }
+
+    changeStateFromChild(stateTarget, data) {
+        this.setState((prevState) => {
+            const newState = prevState;
+            newState[stateTarget] = data;
+            return newState;
+        });
     }
 
     render() {
         const { nodes } = this.state;
         return (
-            <div className="App">
-                <div role="button" tabIndex="0" className="grid-container">
+            <div className="App container">
+                <ControlPanel visualize={this.visualize} />
+                <div
+                    role="button"
+                    tabIndex="0"
+                    className="grid-container row justify-content-center"
+                >
                     {nodes.map((l) => {
                         return l.map((node) => {
                             const { isPath, name, row, col, isWall } = node;

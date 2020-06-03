@@ -16,12 +16,7 @@ class Node extends React.Component {
             col,
             onMouseEnter,
         } = this.props;
-        let wall;
-        if (isWall) {
-            wall = "wall";
-        } else {
-            wall = "";
-        }
+        const wall = isWall ? "wall" : "";
         return (
             <div
                 tabIndex="0"
