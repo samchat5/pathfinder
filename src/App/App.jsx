@@ -96,14 +96,6 @@ class App extends React.Component {
         }
     }
 
-    changeStateFromChild(stateTarget, data) {
-        this.setState((prevState) => {
-            const newState = prevState;
-            newState[stateTarget] = data;
-            return newState;
-        });
-    }
-
     render() {
         const { nodes } = this.state;
         return (
