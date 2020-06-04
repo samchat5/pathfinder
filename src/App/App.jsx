@@ -73,6 +73,7 @@ class App extends React.Component {
         this.state = {
             nodes: [],
             isMouseDown: false,
+            isButtonDisabled: false,
         };
         this.handleOnMouseDown = this.handleOnMouseDown.bind(this);
         this.handleOnMouseEnter = this.handleOnMouseEnter.bind(this);
@@ -85,6 +86,16 @@ class App extends React.Component {
         this.setState({ nodes });
     }
 
+    // Animation is finished when there is a path on the grid
+    disableUntilAnimationFinishes() {
+        const int = setInterval(() => {
+            if (document.getElementsByClassName("Node true").length !== 0) {
+                this.setState({ isButtonDisabled: false });
+                clearInterval(int);
+            }
+        }, 10);
+    }
+
     visualize(rowStart, colStart, rowEnd, colEnd) {
         const { nodes } = this.state;
         removeVisited(nodes);
@@ -94,7 +105,11 @@ class App extends React.Component {
             `col${colStart}row${rowStart}`,
             `col${colEnd}row${rowEnd}`
         );
+        if (path !== undefined) {
+            this.setState({ isButtonDisabled: true });
+        }
         animate(visited, path);
+        this.disableUntilAnimationFinishes();
     }
 
     handleOnMouseDown(row, col) {
@@ -117,10 +132,13 @@ class App extends React.Component {
     }
 
     render() {
-        const { nodes } = this.state;
+        const { nodes, isButtonDisabled } = this.state;
         return (
             <div className="App container">
-                <ControlPanel visualize={this.visualize} />
+                <ControlPanel
+                    isButtonDisabled={isButtonDisabled}
+                    visualize={this.visualize}
+                />
                 <div
                     role="button"
                     tabIndex="0"

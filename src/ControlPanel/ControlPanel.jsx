@@ -30,6 +30,7 @@ class ControlPanel extends React.Component {
     }
 
     render() {
+        const { isButtonDisabled } = this.props;
         return (
             <div className="row my-3 justify-content-center input-group">
                 <div className="input-group-prepend">
@@ -73,6 +74,7 @@ class ControlPanel extends React.Component {
                     onClick={this.handleSubmit}
                     type="submit"
                     className="btn btn-primary"
+                    disabled={isButtonDisabled}
                 >
                     Press to graph
                 </button>
@@ -83,6 +85,7 @@ class ControlPanel extends React.Component {
 
 ControlPanel.propTypes = {
     visualize: PropTypes.func.isRequired,
+    isButtonDisabled: PropTypes.bool.isRequired,
 };
 
 export default ControlPanel;

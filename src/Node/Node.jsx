@@ -4,7 +4,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./Node.css";
 
-class Node extends React.Component {
+class Node extends React.PureComponent {
     render() {
         const {
             name,
@@ -23,7 +23,6 @@ class Node extends React.Component {
                 role="button"
                 id={name}
                 className={`Node ${isPath} ${wall}`}
-                onMouseOver={this.handleOnMouseOver}
                 onMouseDown={() => onMouseDown(row, col)}
                 onMouseUp={onMouseUp}
                 onMouseEnter={() => onMouseEnter(row, col)}
