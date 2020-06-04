@@ -13,6 +13,9 @@ const closestNode = (distances, visited) => {
 };
 
 const dijkstras = (graph, start, target) => {
+    if (graph[start] === undefined || graph[target] === undefined) {
+        return [];
+    }
     // Creates HashMap for distance from start node to the given node in the object
     let distances = {};
     // Distance from target node to start node is Inf
@@ -27,7 +30,7 @@ const dijkstras = (graph, start, target) => {
     const visited = [];
     // CurrentNode is equal to the closest Node to the start node
     let currentNode = closestNode(distances, visited);
-    while (currentNode) {
+    while (currentNode && currentNode !== target) {
         const distance = distances[currentNode];
         const children = graph[currentNode];
         const childrenArr = Object.keys(children);
@@ -59,7 +62,7 @@ const dijkstras = (graph, start, target) => {
         parent = parents[parent];
     }
     shortestPath.reverse();
-    return shortestPath;
+    return [shortestPath, visited];
 };
 
 export default dijkstras;

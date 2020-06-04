@@ -33,18 +33,35 @@ const graphWithAddedRemovedWall = (nodes, row, col) => {
     return newNodes;
 };
 
-const graphWithAddedPath = (nodes, path) => {
-    const newNodes = nodes;
+const removeVisited = (nodes) => {
     for (let i = 0; i < 20; i += 1) {
         for (let j = 0; j < 20; j += 1) {
-            if (path.includes(nodes[i][j].name)) {
-                newNodes[i][j].isPath = true;
+            if (nodes[i][j].isWall) {
+                document.getElementById(nodes[i][j].name).className =
+                    "Node wall false";
             } else {
-                newNodes[i][j].isPath = false;
+                document.getElementById(nodes[i][j].name).className =
+                    "Node false";
             }
         }
     }
-    return newNodes;
+};
+
+const animate = (visited, path) => {
+    for (let i = 0; i <= visited.length; i += 1) {
+        if (i === visited.length) {
+            for (let j = 0; j < path.length; j += 1) {
+                setTimeout(() => {
+                    document.getElementById(path[j]).className = `Node true`;
+                }, 20 * i);
+            }
+            break;
+        } else {
+            setTimeout(() => {
+                document.getElementById(visited[i]).className = `Node visited`;
+            }, 20 * i);
+        }
+    }
 };
 
 class App extends React.Component {
@@ -67,14 +84,14 @@ class App extends React.Component {
 
     visualize(rowStart, colStart, rowEnd, colEnd) {
         const { nodes } = this.state;
+        removeVisited(nodes);
         const graph = toGraph(nodes);
-        const path = dijkstras(
+        const [path, visited] = dijkstras(
             graph,
             `col${colStart}row${rowStart}`,
             `col${colEnd}row${rowEnd}`
         );
-        const newNodes = graphWithAddedPath(nodes, path);
-        this.setState({ nodes: newNodes, isMouseDown: false });
+        animate(visited, path);
     }
 
     handleOnMouseDown(row, col) {

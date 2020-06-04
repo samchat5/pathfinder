@@ -11,3 +11,7 @@
 .wall {
     background-color: gray;
 }
+
+.visited {
+    background-color: hotpink;
+}
