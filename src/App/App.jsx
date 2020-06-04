@@ -48,18 +48,21 @@ const removeVisited = (nodes) => {
 };
 
 const animate = (visited, path) => {
+    if (visited === undefined) {
+        return;
+    }
     for (let i = 0; i <= visited.length; i += 1) {
         if (i === visited.length) {
             for (let j = 0; j < path.length; j += 1) {
                 setTimeout(() => {
                     document.getElementById(path[j]).className = `Node true`;
-                }, 20 * i);
+                }, 15 * i);
             }
             break;
         } else {
             setTimeout(() => {
                 document.getElementById(visited[i]).className = `Node visited`;
-            }, 20 * i);
+            }, 15 * i);
         }
     }
 };
