@@ -93,7 +93,7 @@ class App extends React.Component {
                 this.setState({ isButtonDisabled: false });
                 clearInterval(int);
             }
-        }, 10);
+        }, 15);
     }
 
     visualize(rowStart, colStart, rowEnd, colEnd) {
