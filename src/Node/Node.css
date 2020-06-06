@@ -5,13 +5,13 @@
 }
 
 .true {
-    background-color: teal;
+    background-color: #e9c46a;
 }
 
 .wall {
-    background-color: gray;
+    background-color: #264653;
 }
 
 .visited {
-    background-color: lightcoral;
+    background-color: #e76f51;
 }

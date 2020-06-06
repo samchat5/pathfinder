@@ -57,7 +57,7 @@ class Node extends React.PureComponent {
                     width="18px"
                     height="18px"
                     viewBox="0 0 16 16"
-                    fill="purple"
+                    fill="#2A9D8F"
                     xmlns="http://www.w3.org/2000/svg"
                 >
                     <path
@@ -100,7 +100,7 @@ class Node extends React.PureComponent {
                     width="18px"
                     height="18px"
                     viewBox="0 0 16 16"
-                    fill="purple"
+                    fill="#2A9D8F"
                     xmlns="http://www.w3.org/2000/svg"
                 >
                     <path
