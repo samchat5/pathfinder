@@ -15,11 +15,22 @@ class ControlPanel extends React.Component {
     }
 
     handleInputChange(e) {
+        const { changeStart, changeTarget } = this.props;
         const { target } = e;
         const { name } = target;
-        this.setState({
-            [name]: target.value,
-        });
+        this.setState(
+            {
+                [name]: Number(target.value),
+            },
+            () => {
+                const { colStart, colEnd, rowEnd, rowStart } = this.state;
+                if (name === "colStart" || name === "rowStart") {
+                    changeStart(colStart, rowStart);
+                } else {
+                    changeTarget(colEnd, rowEnd);
+                }
+            }
+        );
     }
 
     handleSubmit(e) {
@@ -86,6 +97,8 @@ class ControlPanel extends React.Component {
 ControlPanel.propTypes = {
     visualize: PropTypes.func.isRequired,
     isButtonDisabled: PropTypes.bool.isRequired,
+    changeStart: PropTypes.func.isRequired,
+    changeTarget: PropTypes.func.isRequired,
 };
 
 export default ControlPanel;

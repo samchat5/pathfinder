@@ -12,6 +12,8 @@ const createNode = (col, row) => {
         col: col + 1,
         row: row + 1,
         isWall: false,
+        isStart: false,
+        isTarget: false,
     };
 };
 
@@ -20,7 +22,17 @@ const getInitialNodes = () => {
     for (let i = 0; i < 20; i += 1) {
         const row = [];
         for (let j = 0; j < 20; j += 1) {
-            row.push(createNode(j, i));
+            if (i === 0 && j === 0) {
+                const start = createNode(j, i);
+                start.isStart = true;
+                row.push(start);
+            } else if (i === 19 && j === 19) {
+                const target = createNode(j, i);
+                target.isTarget = true;
+                row.push(target);
+            } else {
+                row.push(createNode(j, i));
+            }
         }
         nodes.push(row);
     }
@@ -67,6 +79,38 @@ const animate = (visited, path) => {
     }
 };
 
+const addTarget = (nodes, cell) => {
+    const newNodes = nodes;
+    for (let i = 0; i < nodes.length; i += 1) {
+        for (let j = 0; j < nodes[i].length; j += 1) {
+            if (nodes[i][j].name === cell) {
+                const target = createNode(j, i);
+                target.isTarget = true;
+                newNodes[i][j] = target;
+            } else if (nodes[i][j].isTarget === true) {
+                newNodes[i][j].isTarget = false;
+            }
+        }
+    }
+    return newNodes;
+};
+
+const addStart = (nodes, cell) => {
+    const newNodes = nodes;
+    for (let i = 0; i < nodes.length; i += 1) {
+        for (let j = 0; j < nodes[i].length; j += 1) {
+            if (nodes[i][j].name === cell) {
+                const start = createNode(j, i);
+                start.isStart = true;
+                newNodes[i][j] = start;
+            } else if (nodes[i][j].isStart === true) {
+                newNodes[i][j].isStart = false;
+            }
+        }
+    }
+    return newNodes;
+};
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -79,6 +123,8 @@ class App extends React.Component {
         this.handleOnMouseEnter = this.handleOnMouseEnter.bind(this);
         this.handleOnMouseUp = this.handleOnMouseUp.bind(this);
         this.visualize = this.visualize.bind(this);
+        this.changeStart = this.changeStart.bind(this);
+        this.changeTarget = this.changeTarget.bind(this);
     }
 
     componentDidMount() {
@@ -94,6 +140,18 @@ class App extends React.Component {
                 clearInterval(int);
             }
         }, 15);
+    }
+
+    changeStart(colStart, rowStart) {
+        const { nodes } = this.state;
+        const newNodes = addStart(nodes, `col${colStart}row${rowStart}`);
+        this.setState({ nodes: newNodes });
+    }
+
+    changeTarget(colEnd, rowEnd) {
+        const { nodes } = this.state;
+        const newNodes = addTarget(nodes, `col${colEnd}row${rowEnd}`);
+        this.setState({ nodes: newNodes });
     }
 
     visualize(rowStart, colStart, rowEnd, colEnd) {
@@ -138,6 +196,8 @@ class App extends React.Component {
                 <ControlPanel
                     isButtonDisabled={isButtonDisabled}
                     visualize={this.visualize}
+                    changeStart={this.changeStart}
+                    changeTarget={this.changeTarget}
                 />
                 <div
                     role="button"
@@ -146,7 +206,15 @@ class App extends React.Component {
                 >
                     {nodes.map((l) => {
                         return l.map((node) => {
-                            const { isPath, name, row, col, isWall } = node;
+                            const {
+                                isPath,
+                                name,
+                                row,
+                                col,
+                                isWall,
+                                isTarget,
+                                isStart,
+                            } = node;
                             return (
                                 <Node
                                     isPath={isPath}
@@ -154,6 +222,8 @@ class App extends React.Component {
                                     row={row}
                                     col={col}
                                     isWall={isWall}
+                                    isTarget={isTarget}
+                                    isStart={isStart}
                                     onMouseDown={
                                         () => this.handleOnMouseDown(row, col)
                                         // eslint-disable-next-line

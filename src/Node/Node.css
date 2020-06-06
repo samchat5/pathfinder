@@ -5,7 +5,7 @@
 }
 
 .true {
-    background-color: green;
+    background-color: teal;
 }
 
 .wall {
@@ -13,5 +13,5 @@
 }
 
 .visited {
-    background-color: hotpink;
+    background-color: lightcoral;
 }
