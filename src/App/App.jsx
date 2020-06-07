@@ -172,9 +172,8 @@ class App extends React.Component {
 
     handleOnMouseDown(row, col) {
         const { nodes } = this.state;
-        this.setState({ isMouseDown: true });
         const newNodes = graphWithAddedRemovedWall(nodes, row, col);
-        this.setState({ nodes: newNodes });
+        this.setState({ nodes: newNodes, isMouseDown: true });
     }
 
     handleOnMouseUp() {

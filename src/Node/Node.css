@@ -6,31 +6,24 @@
 
 @keyframes visited {
     0% {
-        background-color: white;
-        transform: scale(0);
+        transform: scale(0.3);
+    }
+    50% {
+        transform: scale(1.2);
     }
     100% {
-        background-color: #e76f51;
-        transform: scale(1);}
+        transform: scale(1);
+    }
 }
 
 @keyframes true {
     0% {
-        background-color: white;
-        transform: scale(0);
+        transform: scale(0.3);
+    }
+    50% {
+        transform: scale(1.2);
     }
     100% {
-        background-color: #e9c46a;
-        transform: scale(1);}
-}
-
-@keyframes wall {
-    from {
-        background-color: white;
-        transform: scale(0);
-    }
-    to {
-        background-color: #264653;
         transform: scale(1);
     }
 }
@@ -42,13 +35,12 @@
 }
 
 .wall {
-    background-color: #264653;
-    animation-name: wall;
-    animation-duration: 0.3s;
+    background-color: #264653
 }
 
 .visited {
     background-color: #e76f51;
     animation-name: visited;
     animation-duration: 0.5s;
+    animation-timing-function: ease-in;
 }
