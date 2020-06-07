@@ -24,11 +24,11 @@ const getInitialNodes = () => {
     for (let i = 0; i < SIZE; i += 1) {
         const row = [];
         for (let j = 0; j < SIZE; j += 1) {
-            if (i === 0 && j === 0) {
+            if (i === 1 && j === 1) {
                 const start = createNode(j, i);
                 start.isStart = true;
                 row.push(start);
-            } else if (i === SIZE - 1 && j === SIZE - 1) {
+            } else if (i === SIZE - 2 && j === SIZE - 2) {
                 const target = createNode(j, i);
                 target.isTarget = true;
                 row.push(target);
