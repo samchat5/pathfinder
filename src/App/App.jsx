@@ -5,6 +5,8 @@ import toGraph from "../util/toGraph";
 import dijkstras from "../util/dijkstra";
 import ControlPanel from "../ControlPanel/ControlPanel";
 
+const SIZE = 21;
+
 const createNode = (col, row) => {
     return {
         isPath: false,
@@ -19,14 +21,14 @@ const createNode = (col, row) => {
 
 const getInitialNodes = () => {
     const nodes = [];
-    for (let i = 0; i < 20; i += 1) {
+    for (let i = 0; i < SIZE; i += 1) {
         const row = [];
-        for (let j = 0; j < 20; j += 1) {
+        for (let j = 0; j < SIZE; j += 1) {
             if (i === 0 && j === 0) {
                 const start = createNode(j, i);
                 start.isStart = true;
                 row.push(start);
-            } else if (i === 19 && j === 19) {
+            } else if (i === SIZE - 1 && j === SIZE - 1) {
                 const target = createNode(j, i);
                 target.isTarget = true;
                 row.push(target);
@@ -46,8 +48,8 @@ const graphWithAddedRemovedWall = (nodes, row, col) => {
 };
 
 const removeVisited = (nodes) => {
-    for (let i = 0; i < 20; i += 1) {
-        for (let j = 0; j < 20; j += 1) {
+    for (let i = 0; i < SIZE; i += 1) {
+        for (let j = 0; j < SIZE; j += 1) {
             if (nodes[i][j].isWall) {
                 document.getElementById(nodes[i][j].name).className =
                     "Node wall false";
@@ -68,7 +70,7 @@ const animate = (visited, path) => {
             for (let j = 0; j < path.length; j += 1) {
                 setTimeout(() => {
                     document.getElementById(path[j]).className = `Node true`;
-                }, 15 * i);
+                }, 15 * i + 30 * j);
             }
             break;
         } else {

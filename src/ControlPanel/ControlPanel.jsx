@@ -5,9 +5,9 @@ class ControlPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            colStart: 1,
+            colStart: 2,
             colEnd: 20,
-            rowStart: 1,
+            rowStart: 2,
             rowEnd: 20,
         };
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -52,14 +52,14 @@ class ControlPanel extends React.Component {
                 <input
                     type="number"
                     name="colStart"
-                    max="20"
+                    max="21"
                     min="1"
                     className="form-control"
                     onChange={this.handleInputChange}
                 />
                 <input
                     type="number"
-                    max="20"
+                    max="21"
                     min="1"
                     name="colEnd"
                     className="form-control"
@@ -67,7 +67,7 @@ class ControlPanel extends React.Component {
                 />
                 <input
                     type="number"
-                    max="20"
+                    max="21"
                     min="1"
                     name="rowStart"
                     className="form-control"
@@ -75,7 +75,7 @@ class ControlPanel extends React.Component {
                 />
                 <input
                     type="number"
-                    max="20"
+                    max="21"
                     min="1"
                     name="rowEnd"
                     className="form-control"
