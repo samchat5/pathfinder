@@ -4,14 +4,51 @@
     border: 1px solid black;
 }
 
+@keyframes visited {
+    0% {
+        background-color: white;
+        transform: scale(0);
+    }
+    100% {
+        background-color: #e76f51;
+        transform: scale(1);}
+}
+
+@keyframes true {
+    0% {
+        background-color: white;
+        transform: scale(0);
+    }
+    100% {
+        background-color: #e9c46a;
+        transform: scale(1);}
+}
+
+@keyframes wall {
+    from {
+        background-color: white;
+        transform: scale(0);
+    }
+    to {
+        background-color: #264653;
+        transform: scale(1);
+    }
+}
+
 .true {
     background-color: #e9c46a;
+    animation-name: true;
+    animation-duration: 0.3s;
 }
 
 .wall {
     background-color: #264653;
+    animation-name: wall;
+    animation-duration: 0.3s;
 }
 
 .visited {
     background-color: #e76f51;
+    animation-name: visited;
+    animation-duration: 0.5s;
 }
