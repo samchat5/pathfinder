@@ -82,6 +82,10 @@ const animate = (visited, path) => {
     }
 };
 
+const getAnimationTime = (visited, path) => {
+    return 15 * visited.length + 30 * path.length;
+};
+
 const addTarget = (nodes, cell) => {
     const newNodes = nodes;
     for (let i = 0; i < nodes.length; i += 1) {
@@ -139,13 +143,10 @@ class App extends React.Component {
     }
 
     // Animation is finished when there is a path on the grid
-    disableUntilAnimationFinishes() {
-        const int = setInterval(() => {
-            if (document.getElementsByClassName("Node true").length !== 0) {
-                this.setState({ isButtonDisabled: false });
-                clearInterval(int);
-            }
-        }, 15);
+    disableUntilAnimationFinishes(time) {
+        setTimeout(() => {
+            this.setState({ isButtonDisabled: false });
+        }, time);
     }
 
     changeStart(colStart, rowStart) {
@@ -173,7 +174,8 @@ class App extends React.Component {
             this.setState({ isButtonDisabled: true });
         }
         animate(visited, path);
-        this.disableUntilAnimationFinishes();
+        const time = getAnimationTime(visited, path);
+        this.disableUntilAnimationFinishes(time);
     }
 
     handleOnMouseDown(row, col) {
