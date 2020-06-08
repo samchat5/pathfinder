@@ -12,6 +12,7 @@ class ControlPanel extends React.Component {
         };
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.reset = this.reset.bind(this);
     }
 
     handleInputChange(e) {
@@ -40,12 +41,17 @@ class ControlPanel extends React.Component {
         e.preventDefault();
     }
 
+    reset() {
+        const { resetGrid } = this.props;
+        this.setState({ colEnd: 20, colStart: 2, rowStart: 2, rowEnd: 20 });
+        resetGrid();
+    }
+
     render() {
         const {
             isButtonDisabled,
             generateGrid,
             generateGridDisabled,
-            resetGrid,
         } = this.props;
         return (
             <div className="row my-3 justify-content-center input-group">
@@ -103,7 +109,7 @@ class ControlPanel extends React.Component {
                     Press for grid
                 </button>
                 <button
-                    onClick={resetGrid}
+                    onClick={this.reset}
                     type="submit"
                     className="btn btn-primary"
                 >
