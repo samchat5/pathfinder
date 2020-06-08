@@ -130,6 +130,7 @@ class App extends React.Component {
         this.changeStart = this.changeStart.bind(this);
         this.changeTarget = this.changeTarget.bind(this);
         this.generateGrid = this.generateGrid.bind(this);
+        this.resetGrid = this.resetGrid.bind(this);
     }
 
     componentDidMount() {
@@ -199,6 +200,17 @@ class App extends React.Component {
         this.setState({ nodes: newNodes, generateGridDisabled: true });
     }
 
+    resetGrid() {
+        const newNodes = getInitialNodes();
+        this.setState({ nodes: newNodes, generateGridDisabled: false }, () => {
+            const gridArray = document.getElementById("grid-container")
+                .children;
+            for (let i = 0; i < gridArray.length; i += 1) {
+                gridArray[i].className = "Node false";
+            }
+        });
+    }
+
     render() {
         const { nodes, isButtonDisabled, generateGridDisabled } = this.state;
         return (
@@ -210,10 +222,12 @@ class App extends React.Component {
                     changeTarget={this.changeTarget}
                     generateGrid={this.generateGrid}
                     generateGridDisabled={generateGridDisabled}
+                    resetGrid={this.resetGrid}
                 />
                 <div
                     role="button"
                     tabIndex="0"
+                    id="grid-container"
                     className="grid-container row justify-content-center"
                 >
                     {nodes.map((l) => {
