@@ -4,6 +4,7 @@ import "./App.css";
 import toGraph from "../util/toGraph";
 import dijkstras from "../util/dijkstra";
 import ControlPanel from "../ControlPanel/ControlPanel";
+import gridGenerator from "../util/gridGenerator";
 
 const SIZE = 21;
 
@@ -120,6 +121,7 @@ class App extends React.Component {
             nodes: [],
             isMouseDown: false,
             isButtonDisabled: false,
+            generateGridDisabled: false,
         };
         this.handleOnMouseDown = this.handleOnMouseDown.bind(this);
         this.handleOnMouseEnter = this.handleOnMouseEnter.bind(this);
@@ -127,6 +129,7 @@ class App extends React.Component {
         this.visualize = this.visualize.bind(this);
         this.changeStart = this.changeStart.bind(this);
         this.changeTarget = this.changeTarget.bind(this);
+        this.generateGrid = this.generateGrid.bind(this);
     }
 
     componentDidMount() {
@@ -190,8 +193,14 @@ class App extends React.Component {
         }
     }
 
+    generateGrid() {
+        const { nodes } = this.state;
+        const newNodes = gridGenerator(nodes);
+        this.setState({ nodes: newNodes, generateGridDisabled: true });
+    }
+
     render() {
-        const { nodes, isButtonDisabled } = this.state;
+        const { nodes, isButtonDisabled, generateGridDisabled } = this.state;
         return (
             <div className="App container">
                 <ControlPanel
@@ -199,6 +208,8 @@ class App extends React.Component {
                     visualize={this.visualize}
                     changeStart={this.changeStart}
                     changeTarget={this.changeTarget}
+                    generateGrid={this.generateGrid}
+                    generateGridDisabled={generateGridDisabled}
                 />
                 <div
                     role="button"

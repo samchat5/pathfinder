@@ -41,7 +41,11 @@ class ControlPanel extends React.Component {
     }
 
     render() {
-        const { isButtonDisabled } = this.props;
+        const {
+            isButtonDisabled,
+            generateGrid,
+            generateGridDisabled,
+        } = this.props;
         return (
             <div className="row my-3 justify-content-center input-group">
                 <div className="input-group-prepend">
@@ -89,6 +93,14 @@ class ControlPanel extends React.Component {
                 >
                     Press to graph
                 </button>
+                <button
+                    onClick={generateGrid}
+                    disabled={generateGridDisabled}
+                    type="submit"
+                    className="btn btn-primary"
+                >
+                    Press for grid
+                </button>
             </div>
         );
     }
@@ -99,6 +111,8 @@ ControlPanel.propTypes = {
     isButtonDisabled: PropTypes.bool.isRequired,
     changeStart: PropTypes.func.isRequired,
     changeTarget: PropTypes.func.isRequired,
+    generateGrid: PropTypes.func.isRequired,
+    generateGridDisabled: PropTypes.bool.isRequired,
 };
 
 export default ControlPanel;
