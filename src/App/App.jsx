@@ -62,26 +62,6 @@ const removeVisited = (nodes) => {
     }
 };
 
-const animate = (visited, path) => {
-    if (visited === undefined) {
-        return;
-    }
-    for (let i = 0; i <= visited.length; i += 1) {
-        if (i === visited.length) {
-            for (let j = 0; j < path.length; j += 1) {
-                setTimeout(() => {
-                    document.getElementById(path[j]).className = `Node true`;
-                }, 15 * i + 30 * j);
-            }
-            break;
-        } else {
-            setTimeout(() => {
-                document.getElementById(visited[i]).className = `Node visited`;
-            }, 15 * i);
-        }
-    }
-};
-
 const getAnimationTime = (visited, path) => {
     return 15 * visited.length + 30 * path.length;
 };
@@ -127,6 +107,10 @@ class App extends React.Component {
             isButtonDisabled: false,
             generateGridDisabled: false,
         };
+
+        // Normally refs are looked down upon but the React documents state that they are admissiable when doing imperative animations such as these
+        this.gridRef = React.createRef();
+
         this.handleOnMouseDown = this.handleOnMouseDown.bind(this);
         this.handleOnMouseEnter = this.handleOnMouseEnter.bind(this);
         this.handleOnMouseUp = this.handleOnMouseUp.bind(this);
@@ -135,11 +119,35 @@ class App extends React.Component {
         this.changeTarget = this.changeTarget.bind(this);
         this.generateGrid = this.generateGrid.bind(this);
         this.resetGrid = this.resetGrid.bind(this);
+        this.animate = this.animate.bind(this);
     }
 
     componentDidMount() {
         const nodes = getInitialNodes();
         this.setState({ nodes });
+    }
+
+    // This is where we use the ref for imperative animations
+    animate(visited, path) {
+        if (visited === undefined) {
+            return;
+        }
+        for (let i = 0; i <= visited.length; i += 1) {
+            if (i === visited.length) {
+                for (let j = 0; j < path.length; j += 1) {
+                    setTimeout(() => {
+                        this.gridRef.current.children[path[j]].className =
+                            "Node true";
+                    }, 15 * i + 30 * j);
+                }
+                break;
+            } else {
+                setTimeout(() => {
+                    this.gridRef.current.children[visited[i]].className =
+                        "Node visited";
+                }, 15 * i);
+            }
+        }
     }
 
     // Animation is finished when there is a path on the grid
@@ -173,7 +181,7 @@ class App extends React.Component {
         if (path !== undefined) {
             this.setState({ isButtonDisabled: true });
         }
-        animate(visited, path);
+        this.animate(visited, path);
         const time = getAnimationTime(visited, path);
         this.disableUntilAnimationFinishes(time);
     }
@@ -230,6 +238,7 @@ class App extends React.Component {
                     role="button"
                     tabIndex="0"
                     id="grid-container"
+                    ref={this.gridRef}
                     className="grid-container row justify-content-center"
                 >
                     {nodes.map((l) => {
