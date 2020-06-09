@@ -6,7 +6,7 @@ import dijkstras from "../util/dijkstra";
 import ControlPanel from "../ControlPanel/ControlPanel";
 import gridGenerator from "../util/gridGenerator";
 
-const SIZE = 21;
+const SIZE = 31;
 
 const createNode = (col, row) => {
     return {
@@ -17,6 +17,7 @@ const createNode = (col, row) => {
         isWall: false,
         isStart: false,
         isTarget: false,
+        isVisited: false,
     };
 };
 
@@ -46,20 +47,6 @@ const graphWithAddedRemovedWall = (nodes, row, col) => {
     const newNodes = nodes;
     newNodes[row - 1][col - 1].isWall = !newNodes[row - 1][col - 1].isWall;
     return newNodes;
-};
-
-const removeVisited = (nodes) => {
-    for (let i = 0; i < SIZE; i += 1) {
-        for (let j = 0; j < SIZE; j += 1) {
-            if (nodes[i][j].isWall) {
-                document.getElementById(nodes[i][j].name).className =
-                    "Node wall false";
-            } else {
-                document.getElementById(nodes[i][j].name).className =
-                    "Node false";
-            }
-        }
-    }
 };
 
 const getAnimationTime = (visited, path) => {
@@ -93,6 +80,17 @@ const addStart = (nodes, cell) => {
             } else if (nodes[i][j].isStart === true) {
                 newNodes[i][j].isStart = false;
             }
+        }
+    }
+    return newNodes;
+};
+
+const removeVisited = (nodes) => {
+    const newNodes = nodes;
+    for (let i = 0; i < SIZE; i += 1) {
+        for (let j = 0; j < SIZE; j += 1) {
+            newNodes[i][j].isPath = false;
+            newNodes[i][j].isVisited = false;
         }
     }
     return newNodes;
@@ -170,20 +168,57 @@ class App extends React.Component {
     }
 
     visualize(rowStart, colStart, rowEnd, colEnd) {
-        const { nodes } = this.state;
-        removeVisited(nodes);
-        const graph = toGraph(nodes);
-        const [path, visited] = dijkstras(
-            graph,
-            `col${colStart}row${rowStart}`,
-            `col${colEnd}row${rowEnd}`
+        this.setState(
+            (prevState) => {
+                return { nodes: removeVisited(prevState.nodes) };
+            },
+            () => {
+                const { nodes } = this.state;
+                const graph = toGraph(nodes);
+                const [path, visited] = dijkstras(
+                    graph,
+                    `col${colStart}row${rowStart}`,
+                    `col${colEnd}row${rowEnd}`
+                );
+                if (path !== undefined) {
+                    this.setState({ isButtonDisabled: true });
+                    this.animate(visited, path);
+                    const time = getAnimationTime(visited, path);
+                    this.disableUntilAnimationFinishes(time);
+                    setTimeout(() => {
+                        this.setState((prevState) => {
+                            const newNodes = prevState.nodes;
+                            for (
+                                let i = 0;
+                                i < prevState.nodes.length;
+                                i += 1
+                            ) {
+                                for (
+                                    let j = 0;
+                                    j < prevState.nodes[i].length;
+                                    j += 1
+                                ) {
+                                    if (
+                                        path.includes(
+                                            prevState.nodes[i][j].name
+                                        )
+                                    ) {
+                                        newNodes[i][j].isPath = true;
+                                    } else if (
+                                        visited.includes(
+                                            prevState.nodes[i][j].name
+                                        )
+                                    ) {
+                                        newNodes[i][j].isVisited = true;
+                                    }
+                                }
+                            }
+                            return { nodes: newNodes };
+                        });
+                    }, time);
+                }
+            }
         );
-        if (path !== undefined) {
-            this.setState({ isButtonDisabled: true });
-        }
-        this.animate(visited, path);
-        const time = getAnimationTime(visited, path);
-        this.disableUntilAnimationFinishes(time);
     }
 
     handleOnMouseDown(row, col) {
@@ -207,18 +242,22 @@ class App extends React.Component {
     generateGrid() {
         const { nodes } = this.state;
         const newNodes = gridGenerator(nodes);
+        for (let i = 0; i < SIZE; i += 1) {
+            for (let j = 0; j < SIZE; j += 1) {
+                if (newNodes[i][j].isPath) {
+                    newNodes[i][j].isPath = false;
+                }
+                if (newNodes[i][j].isVisited) {
+                    newNodes[i][j].isVisited = false;
+                }
+            }
+        }
         this.setState({ nodes: newNodes, generateGridDisabled: true });
     }
 
     resetGrid() {
         const newNodes = getInitialNodes();
-        this.setState({ nodes: newNodes, generateGridDisabled: false }, () => {
-            const gridArray = document.getElementById("grid-container")
-                .children;
-            for (let i = 0; i < gridArray.length; i += 1) {
-                gridArray[i].className = "Node false";
-            }
-        });
+        this.setState({ nodes: newNodes, generateGridDisabled: false });
     }
 
     render() {
@@ -251,6 +290,7 @@ class App extends React.Component {
                                 isWall,
                                 isTarget,
                                 isStart,
+                                isVisited,
                             } = node;
                             return (
                                 <Node
@@ -261,6 +301,7 @@ class App extends React.Component {
                                     isWall={isWall}
                                     isTarget={isTarget}
                                     isStart={isStart}
+                                    isVisited={isVisited}
                                     onMouseDown={
                                         () => this.handleOnMouseDown(row, col)
                                         // eslint-disable-next-line
