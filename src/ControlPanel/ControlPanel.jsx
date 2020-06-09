@@ -1,14 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+const SIZE = 31;
+
 class ControlPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             colStart: 2,
-            colEnd: 20,
+            colEnd: SIZE - 1,
             rowStart: 2,
-            rowEnd: 20,
+            rowEnd: SIZE - 1,
         };
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -43,7 +45,12 @@ class ControlPanel extends React.Component {
 
     reset() {
         const { resetGrid } = this.props;
-        this.setState({ colEnd: 20, colStart: 2, rowStart: 2, rowEnd: 20 });
+        this.setState({
+            colEnd: SIZE - 1,
+            colStart: 2,
+            rowStart: 2,
+            rowEnd: SIZE - 1,
+        });
         resetGrid();
     }
 
@@ -63,14 +70,14 @@ class ControlPanel extends React.Component {
                 <input
                     type="number"
                     name="colStart"
-                    max="21"
+                    max={SIZE}
                     min="1"
                     className="form-control"
                     onChange={this.handleInputChange}
                 />
                 <input
                     type="number"
-                    max="21"
+                    max={SIZE}
                     min="1"
                     name="colEnd"
                     className="form-control"
@@ -78,7 +85,7 @@ class ControlPanel extends React.Component {
                 />
                 <input
                     type="number"
-                    max="21"
+                    max={SIZE}
                     min="1"
                     name="rowStart"
                     className="form-control"
@@ -86,7 +93,7 @@ class ControlPanel extends React.Component {
                 />
                 <input
                     type="number"
-                    max="21"
+                    max={SIZE}
                     min="1"
                     name="rowEnd"
                     className="form-control"

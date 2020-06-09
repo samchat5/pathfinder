@@ -15,14 +15,16 @@ class Node extends React.PureComponent {
             row,
             col,
             onMouseEnter,
+            isVisited,
         } = this.props;
         const wall = isWall ? "wall" : "";
+        const visited = isVisited ? "visited" : "";
         return (
             <div
                 tabIndex="0"
                 role="button"
                 id={name}
-                className={`Node ${isPath} ${wall}`}
+                className={`Node ${isPath} ${wall} ${visited}`}
                 onMouseDown={() => onMouseDown(row, col)}
                 onMouseUp={onMouseUp}
                 onMouseEnter={() => onMouseEnter(row, col)}
@@ -40,14 +42,16 @@ class Node extends React.PureComponent {
             row,
             col,
             onMouseEnter,
+            isVisited,
         } = this.props;
         const wall = isWall ? "wall" : "";
+        const visited = isVisited ? "" : "";
         return (
             <div
                 tabIndex="0"
                 role="button"
                 id={name}
-                className={`Node ${isPath} ${wall}`}
+                className={`Node ${isPath} ${wall} ${visited}`}
                 onMouseDown={() => onMouseDown(row, col)}
                 onMouseUp={onMouseUp}
                 onMouseEnter={() => onMouseEnter(row, col)}
@@ -83,14 +87,16 @@ class Node extends React.PureComponent {
             row,
             col,
             onMouseEnter,
+            isVisited,
         } = this.props;
         const wall = isWall ? "wall" : "";
+        const visited = isVisited ? "" : "";
         return (
             <div
                 tabIndex="0"
                 role="button"
                 id={name}
-                className={`Node ${isPath} ${wall}`}
+                className={`Node ${isPath} ${wall} ${visited}`}
                 onMouseDown={() => onMouseDown(row, col)}
                 onMouseUp={onMouseUp}
                 onMouseEnter={() => onMouseEnter(row, col)}
@@ -144,6 +150,7 @@ Node.propTypes = {
     onMouseEnter: PropTypes.func.isRequired,
     isTarget: PropTypes.bool.isRequired,
     isStart: PropTypes.bool.isRequired,
+    isVisited: PropTypes.bool.isRequired,
 };
 
 export default Node;
