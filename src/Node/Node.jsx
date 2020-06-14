@@ -142,8 +142,8 @@ class Node extends React.PureComponent {
 Node.propTypes = {
     name: PropTypes.string.isRequired,
     isPath: PropTypes.bool.isRequired,
-    row: PropTypes.string.isRequired,
-    col: PropTypes.string.isRequired,
+    row: PropTypes.number.isRequired,
+    col: PropTypes.number.isRequired,
     onMouseDown: PropTypes.func.isRequired,
     onMouseUp: PropTypes.func.isRequired,
     isWall: PropTypes.bool.isRequired,

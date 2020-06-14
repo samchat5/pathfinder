@@ -1,13 +1,14 @@
 import React from "react";
-import Node from "../Node/Node";
 import "./App.css";
 import toGraph from "../util/toGraph";
 import dijkstras from "../util/dijkstra";
 import ControlPanel from "../ControlPanel/ControlPanel";
 import gridGenerator from "../util/gridGenerator";
+import GridContainer from "../GridContainer/GridContainer";
 
 const SIZE = 31;
 
+// Creates a node object literal
 const createNode = (col, row) => {
     return {
         isPath: false,
@@ -21,6 +22,7 @@ const createNode = (col, row) => {
     };
 };
 
+// Builds a node array representing the initial state of the grid
 const getInitialNodes = () => {
     const nodes = [];
     for (let i = 0; i < SIZE; i += 1) {
@@ -43,16 +45,19 @@ const getInitialNodes = () => {
     return nodes;
 };
 
+// Toggles whether or not a node is a wal or not
 const graphWithAddedRemovedWall = (nodes, row, col) => {
     const newNodes = nodes;
     newNodes[row - 1][col - 1].isWall = !newNodes[row - 1][col - 1].isWall;
     return newNodes;
 };
 
+// Returns the time it takes to finish the animation in ms
 const getAnimationTime = (visited, path) => {
     return 15 * visited.length + 30 * path.length;
 };
 
+// Removes all target nodes from the node array and chagnes it to the given cell
 const addTarget = (nodes, cell) => {
     const newNodes = nodes;
     for (let i = 0; i < nodes.length; i += 1) {
@@ -69,6 +74,7 @@ const addTarget = (nodes, cell) => {
     return newNodes;
 };
 
+// Removes all start nodes from the node array and changes it to the given cell
 const addStart = (nodes, cell) => {
     const newNodes = nodes;
     for (let i = 0; i < nodes.length; i += 1) {
@@ -85,6 +91,7 @@ const addStart = (nodes, cell) => {
     return newNodes;
 };
 
+// Removes visited and path nodes inside the list of Nodes
 const removeVisited = (nodes) => {
     const newNodes = nodes;
     for (let i = 0; i < SIZE; i += 1) {
@@ -106,18 +113,25 @@ class App extends React.Component {
             generateGridDisabled: false,
         };
 
-        // Normally refs are looked down upon but the React documents state that they are admissiable when doing imperative animations such as these
+        // Normally refs aren't good but the React documents state that they are admissiable when doing imperative animations such as these
         this.gridRef = React.createRef();
 
+        // Mouse handler methods
         this.handleOnMouseDown = this.handleOnMouseDown.bind(this);
         this.handleOnMouseEnter = this.handleOnMouseEnter.bind(this);
         this.handleOnMouseUp = this.handleOnMouseUp.bind(this);
+
+        // Animation methods
         this.visualize = this.visualize.bind(this);
+        this.animate = this.animate.bind(this);
+
+        // Graph manipulation methods
         this.changeStart = this.changeStart.bind(this);
         this.changeTarget = this.changeTarget.bind(this);
+
+        // Grid methods
         this.generateGrid = this.generateGrid.bind(this);
         this.resetGrid = this.resetGrid.bind(this);
-        this.animate = this.animate.bind(this);
     }
 
     componentDidMount() {
@@ -155,6 +169,7 @@ class App extends React.Component {
         }, time);
     }
 
+    // TODO: combine these functions with those defined above
     changeStart(colStart, rowStart) {
         const { nodes } = this.state;
         const newNodes = addStart(nodes, `col${colStart}row${rowStart}`);
@@ -168,6 +183,7 @@ class App extends React.Component {
     }
 
     visualize(rowStart, colStart, rowEnd, colEnd) {
+        // First, remove all visited nodes from the current grid
         this.setState(
             (prevState) => {
                 return { nodes: removeVisited(prevState.nodes) };
@@ -180,11 +196,14 @@ class App extends React.Component {
                     `col${colStart}row${rowStart}`,
                     `col${colEnd}row${rowEnd}`
                 );
+                // Then, if the path is defined, disable the graph button and animte
                 if (path !== undefined) {
                     this.setState({ isButtonDisabled: true });
                     this.animate(visited, path);
                     const time = getAnimationTime(visited, path);
+                    // Enable the button after time ms
                     this.disableUntilAnimationFinishes(time);
+                    // TODO: make this it's own function?
                     setTimeout(() => {
                         this.setState((prevState) => {
                             const newNodes = prevState.nodes;
@@ -221,6 +240,7 @@ class App extends React.Component {
         );
     }
 
+    // TODO: combine these functions with the function up top
     handleOnMouseDown(row, col) {
         const { nodes } = this.state;
         const newNodes = graphWithAddedRemovedWall(nodes, row, col);
@@ -239,6 +259,7 @@ class App extends React.Component {
         }
     }
 
+    // Generates a grid using recursive division
     generateGrid() {
         const { nodes } = this.state;
         const newNodes = gridGenerator(nodes);
@@ -255,6 +276,7 @@ class App extends React.Component {
         this.setState({ nodes: newNodes, generateGridDisabled: true });
     }
 
+    // Resets the grid to initial state
     resetGrid() {
         const newNodes = getInitialNodes();
         this.setState({ nodes: newNodes, generateGridDisabled: false });
@@ -273,49 +295,13 @@ class App extends React.Component {
                     generateGridDisabled={generateGridDisabled}
                     resetGrid={this.resetGrid}
                 />
-                <div
-                    role="button"
-                    tabIndex="0"
-                    id="grid-container"
+                <GridContainer
+                    onMouseEnter={this.handleOnMouseEnter}
+                    onMouseUp={this.handleOnMouseUp}
+                    onMouseDown={this.handleOnMouseDown}
                     ref={this.gridRef}
-                    className="grid-container row justify-content-center"
-                >
-                    {nodes.map((l) => {
-                        return l.map((node) => {
-                            const {
-                                isPath,
-                                name,
-                                row,
-                                col,
-                                isWall,
-                                isTarget,
-                                isStart,
-                                isVisited,
-                            } = node;
-                            return (
-                                <Node
-                                    isPath={isPath}
-                                    name={name}
-                                    row={row}
-                                    col={col}
-                                    isWall={isWall}
-                                    isTarget={isTarget}
-                                    isStart={isStart}
-                                    isVisited={isVisited}
-                                    onMouseDown={
-                                        () => this.handleOnMouseDown(row, col)
-                                        // eslint-disable-next-line
-                                    }
-                                    onMouseUp={this.handleOnMouseUp}
-                                    onMouseEnter={
-                                        () => this.handleOnMouseEnter(row, col)
-                                        // eslint-disable-next-line
-                                    }
-                                />
-                            );
-                        });
-                    })}
-                </div>
+                    nodes={nodes}
+                />
             </div>
         );
     }
