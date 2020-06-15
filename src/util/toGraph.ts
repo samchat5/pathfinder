@@ -1,11 +1,14 @@
-// [List-of Node] => Graph
-const toGraph = (nodeArray) => {
-    const graph = {};
+import Node from "../NodeInterface";
+
+const toGraph = (
+    nodeArray: Array<Array<Node>>
+): { [index: string]: { [index: string]: number } } => {
+    const graph: { [index: string]: { [index: string]: number } } = {};
     for (let i = 0; i < nodeArray.length; i += 1) {
         for (let j = 0; j < nodeArray[i].length; j += 1) {
             if (!nodeArray[i][j].isWall) {
                 const nodeName = nodeArray[i][j].name;
-                const neighbors = {};
+                const neighbors: { [index: string]: number } = {};
                 const top = i !== 0 ? nodeArray[i - 1][j] : null;
                 const bottom =
                     i !== nodeArray.length - 1 ? nodeArray[i + 1][j] : null;

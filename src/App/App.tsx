@@ -5,11 +5,12 @@ import dijkstras from "../util/dijkstra";
 import ControlPanel from "../ControlPanel/ControlPanel";
 import gridGenerator from "../util/gridGenerator";
 import GridContainer from "../GridContainer/GridContainer";
+import Node from "../NodeInterface";
 
 const SIZE = 31;
 
 // Creates a node object literal
-const createNode = (col, row) => {
+const createNode = (col: number, row: number): Node => {
     return {
         isPath: false,
         name: `col${col + 1}row${row + 1}`,
@@ -23,7 +24,7 @@ const createNode = (col, row) => {
 };
 
 // Builds a node array representing the initial state of the grid
-const getInitialNodes = () => {
+const getInitialNodes = (): Array<Array<Node>> => {
     const nodes = [];
     for (let i = 0; i < SIZE; i += 1) {
         const row = [];
@@ -45,13 +46,13 @@ const getInitialNodes = () => {
     return nodes;
 };
 
-function App() {
-    const [nodes, setNodes] = useState([]);
+function App(): JSX.Element {
+    const [nodes, setNodes] = useState<Array<Array<Node>>>(getInitialNodes());
     const [isMouseDown, setIsMouseDown] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [generateGridDisabled, setGenerateGridDisabled] = useState(false);
     const [, forceUpdate] = useReducer((x) => x + 1, 0);
-    const gridRef = useRef();
+    const gridRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const newNodes = getInitialNodes();
@@ -59,7 +60,8 @@ function App() {
     }, []);
 
     // Removes all target nodes from the node array and chagnes it to the given cell
-    const addTarget = (cell) => {
+    const changeTarget = (colEnd: number, rowEnd: number): void => {
+        const cell = `col${colEnd}row${rowEnd}`;
         const newNodes = nodes;
         for (let i = 0; i < nodes.length; i += 1) {
             for (let j = 0; j < nodes[i].length; j += 1) {
@@ -72,11 +74,15 @@ function App() {
                 }
             }
         }
-        return newNodes;
+        setNodes(newNodes);
+        // Same with the animations for the walls, only one node out of SIZE**2 nodes is being update so
+        // to animate we have to force a full render
+        forceUpdate();
     };
 
     // Removes all start nodes from the node array and changes it to the given cell
-    const addStart = (cell) => {
+    const changeStart = (colStart: number, rowStart: number): void => {
+        const cell = `col${colStart}row${rowStart}`;
         const newNodes = nodes;
         for (let i = 0; i < nodes.length; i += 1) {
             for (let j = 0; j < nodes[i].length; j += 1) {
@@ -89,11 +95,12 @@ function App() {
                 }
             }
         }
-        return newNodes;
+        setNodes(newNodes);
+        forceUpdate();
     };
 
     // Removes visited and path nodes inside the list of Nodes
-    const removeVisited = () => {
+    const removeVisited = (): Node[][] => {
         const newNodes = nodes;
         for (let i = 0; i < SIZE; i += 1) {
             for (let j = 0; j < SIZE; j += 1) {
@@ -105,14 +112,14 @@ function App() {
     };
 
     // Toggles whether or not a node is a wal or not
-    const graphWithAddedRemovedWall = (row, col) => {
+    const graphWithAddedRemovedWall = (row: number, col: number): Node[][] => {
         const newNodes = nodes;
         newNodes[row - 1][col - 1].isWall = !newNodes[row - 1][col - 1].isWall;
         return newNodes;
     };
 
     // This is where we use the ref for imperative animations
-    const animate = (visited, path) => {
+    const animate = (visited: string[], path: string[]): void => {
         if (visited === undefined) {
             return;
         }
@@ -120,41 +127,45 @@ function App() {
             if (i === visited.length) {
                 for (let j = 0; j < path.length; j += 1) {
                     setTimeout(() => {
-                        gridRef.current.children[path[j]].className =
-                            "Node true";
+                        if (gridRef && gridRef.current) {
+                            const childArr = [...gridRef.current.children];
+                            childArr[
+                                childArr.findIndex(
+                                    (elem) => elem.id === path[j]
+                                )
+                            ].className = "Node true";
+                        }
                     }, 15 * i + 30 * j);
                 }
                 break;
             } else {
                 setTimeout(() => {
-                    gridRef.current.children[visited[i]].className =
-                        "Node visited";
+                    if (gridRef && gridRef.current) {
+                        const childArr = [...gridRef.current.children];
+                        childArr[
+                            childArr.findIndex((elem) => elem.id === visited[i])
+                        ].className = "Node visited";
+                    }
                 }, 15 * i);
             }
         }
     };
 
     // Animation is finished when there is a path on the grid
-    const disableUntilAnimationFinishes = (time) => {
+    const disableUntilAnimationFinishes = (time: number): void => {
         setTimeout(() => {
             setIsButtonDisabled(false);
         }, time);
     };
 
-    // TODO: combine these functions with those defined above
-    const changeStart = (colStart, rowStart) => {
-        const newNodes = addStart(nodes, `col${colStart}row${rowStart}`);
-        setNodes(newNodes);
-    };
-
-    const changeTarget = (colEnd, rowEnd) => {
-        const newNodes = addTarget(nodes, `col${colEnd}row${rowEnd}`);
-        setNodes(newNodes);
-    };
-
-    const useVisualize = (rowStart, colStart, rowEnd, colEnd) => {
+    const useVisualize = (
+        rowStart: number,
+        colStart: number,
+        rowEnd: number,
+        colEnd: number
+    ): void => {
         // First, remove all visited nodes from the current grid
-        setNodes(removeVisited(nodes));
+        setNodes(removeVisited());
         const graph = toGraph(nodes);
         const [path, visited] = dijkstras(
             graph,
@@ -162,7 +173,7 @@ function App() {
             `col${colEnd}row${rowEnd}`
         );
         // Then, if the path is defined, disable the graph button and animte
-        if (path !== undefined) {
+        if (path !== undefined && visited !== undefined) {
             setIsButtonDisabled(true);
             animate(visited, path);
             const time = 15 * visited.length + 30 * path.length;
@@ -187,7 +198,7 @@ function App() {
         }
     };
 
-    const handleOnMouseEnter = (row, col) => {
+    const handleOnMouseEnter = (row: number, col: number): void => {
         if (isMouseDown) {
             const newNodes = graphWithAddedRemovedWall(row, col);
             setNodes(newNodes);
@@ -198,18 +209,18 @@ function App() {
     };
 
     // TODO: combine these functions with the function up top
-    const handleOnMouseDown = (row, col) => {
+    const handleOnMouseDown = (row: number, col: number): void => {
         const newNodes = graphWithAddedRemovedWall(row, col);
         setNodes(newNodes);
         setIsMouseDown(true);
     };
 
-    const handleOnMouseUp = () => {
+    const handleOnMouseUp = (): void => {
         setIsMouseDown(false);
     };
 
     // Generates a grid using recursive division
-    const generateGrid = () => {
+    const generateGrid = (): void => {
         const newNodes = gridGenerator(nodes);
         for (let i = 0; i < SIZE; i += 1) {
             for (let j = 0; j < SIZE; j += 1) {
@@ -226,14 +237,16 @@ function App() {
     };
 
     // Resets the grid to initial state
-    const resetGrid = () => {
+    const resetGrid = (): void => {
         const newNodes = getInitialNodes();
         setNodes(newNodes);
         setGenerateGridDisabled(false);
         // After setting the className during the animate function, we have to reset it
         // through a manual DOM update over here
-        for (let i = 0; i < gridRef.current.children.length; i += 1) {
-            gridRef.current.children[i].className = "Node false";
+        if (gridRef && gridRef.current) {
+            for (let i = 0; i < gridRef.current.children.length; i += 1) {
+                gridRef.current.children[i].className = "Node false";
+            }
         }
     };
 

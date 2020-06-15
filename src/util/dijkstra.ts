@@ -1,6 +1,9 @@
-const closestNode = (distances, visited) => {
+const closestNode = (
+    distances: { [index: string]: number },
+    visited: Array<string>
+): string | null => {
     // Default closest node = null
-    let shortest = null;
+    let shortest: string | null = null;
     Object.keys(distances).forEach((node) => {
         const isShortest =
             shortest === null || distances[node] < distances[shortest];
@@ -12,22 +15,26 @@ const closestNode = (distances, visited) => {
     return shortest;
 };
 
-const dijkstras = (graph, start, target) => {
+const dijkstras = (
+    graph: { [index: string]: { [index: string]: number } },
+    start: string,
+    target: string
+): [string[], string[]] | [undefined, undefined] => {
     if (graph[start] === undefined || graph[target] === undefined) {
-        return [];
+        return [undefined, undefined];
     }
     // Creates HashMap for distance from start node to the given node in the object
-    let distances = {};
+    let distances: { [index: string]: number } = {};
     // Distance from target node to start node is Inf
     distances[target] = Infinity;
     distances = Object.assign(distances, graph[start]);
     // Creates a HashMap for parents of each node so we can get the shortest path at the end
-    const parents = { target: null };
+    const parents: { [index: string]: string | null } = { target: null };
     Object.keys(graph[start]).forEach((child) => {
         parents[child] = start;
     });
     // Array of visited nodes
-    const visited = [];
+    const visited: Array<string> = [];
     // CurrentNode is equal to the closest Node to the start node
     let currentNode = closestNode(distances, visited);
     while (currentNode && currentNode !== target) {

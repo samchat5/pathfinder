@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events, jsx-a11y/control-has-associated-label */
 
 import React from "react";
-import PropTypes from "prop-types";
+import PropTypes, { InferProps } from "prop-types";
 import "./Node.css";
 
-function Node(props) {
+function Node(props: InferProps<typeof Node.propTypes>): JSX.Element {
     const {
         name,
         isPath,
@@ -21,30 +21,30 @@ function Node(props) {
     const wall = isWall ? "wall" : "";
     const visited = isVisited ? "visited" : "";
 
-    const renderNode = () => {
+    const renderNode = (): JSX.Element => {
         return (
             <div
-                tabIndex="0"
+                tabIndex={0}
                 role="button"
                 id={name}
                 className={`Node ${isPath} ${wall} ${visited}`}
-                onMouseDown={() => onMouseDown(row, col)}
+                onMouseDown={(): void => onMouseDown(row, col)}
                 onMouseUp={onMouseUp}
-                onMouseEnter={() => onMouseEnter(row, col)}
+                onMouseEnter={(): void => onMouseEnter(row, col)}
             />
         );
     };
 
-    const renderStart = () => {
+    const renderStart = (): JSX.Element => {
         return (
             <div
-                tabIndex="0"
+                tabIndex={0}
                 role="button"
                 id={name}
                 className={`Node ${isPath} ${wall} ${visited}`}
-                onMouseDown={() => onMouseDown(row, col)}
+                onMouseDown={(): void => onMouseDown(row, col)}
                 onMouseUp={onMouseUp}
-                onMouseEnter={() => onMouseEnter(row, col)}
+                onMouseEnter={(): void => onMouseEnter(row, col)}
             >
                 <svg
                     className="bi bi-house-fill align-baseline"
@@ -67,16 +67,16 @@ function Node(props) {
         );
     };
 
-    const renderTarget = () => {
+    const renderTarget = (): JSX.Element => {
         return (
             <div
-                tabIndex="0"
+                tabIndex={0}
                 role="button"
                 id={name}
                 className={`Node ${isPath} ${wall} ${visited}`}
-                onMouseDown={() => onMouseDown(row, col)}
+                onMouseDown={(): void => onMouseDown(row, col)}
                 onMouseUp={onMouseUp}
-                onMouseEnter={() => onMouseEnter(row, col)}
+                onMouseEnter={(): void => onMouseEnter(row, col)}
             >
                 <svg
                     className="bi bi-bullseye target align-baseline"

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
+import PropTypes, { InferProps } from "prop-types";
 
 const SIZE = 31;
 
-function ControlPanel(props) {
-    const [state, setState] = useState({
-        colStart: 2,
-        colEnd: SIZE - 1,
-        rowStart: 2,
-        rowEnd: SIZE - 1,
-    });
+function ControlPanel(
+    props: InferProps<typeof ControlPanel.propTypes>
+): JSX.Element {
+    const [colStart, setColStart] = useState(2);
+    const [colEnd, setColEnd] = useState(SIZE - 1);
+    const [rowStart, setRowStart] = useState(2);
+    const [rowEnd, setRowEnd] = useState(SIZE - 1);
+
     const {
         changeStart,
         changeTarget,
@@ -20,37 +21,35 @@ function ControlPanel(props) {
         resetGrid,
     } = props;
 
-    const handleInputChange = (e) => {
+    const useInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const { target } = e;
         const { name } = target;
-        setState(
-            {
-                [name]: Number(target.value),
-            },
-            () => {
-                const { colStart, colEnd, rowEnd, rowStart } = state;
-                if (name === "colStart" || name === "rowStart") {
-                    changeStart(colStart, rowStart);
-                } else {
-                    changeTarget(colEnd, rowEnd);
-                }
-            }
-        );
+        const val = Number(target.value);
+        if (name === "colStart") {
+            setColStart(val);
+            changeStart(val, rowStart);
+        } else if (name === "rowStart") {
+            setRowStart(val);
+            changeStart(colStart, val);
+        } else if (name === "colEnd") {
+            setColEnd(val);
+            changeTarget(val, rowEnd);
+        } else {
+            setRowEnd(val);
+            changeTarget(colEnd, val);
+        }
     };
 
-    const handleSubmit = (e) => {
-        const { rowEnd, colEnd, rowStart, colStart } = state;
+    const handleSubmit = (e: React.FormEvent<HTMLButtonElement>): void => {
         visualize(rowStart, colStart, rowEnd, colEnd);
         e.preventDefault();
     };
 
-    const reset = () => {
-        setState({
-            colEnd: SIZE - 1,
-            colStart: 2,
-            rowStart: 2,
-            rowEnd: SIZE - 1,
-        });
+    const reset = (): void => {
+        setColEnd(SIZE - 1);
+        setColStart(2);
+        setRowStart(2);
+        setRowEnd(SIZE - 1);
         resetGrid();
     };
 
@@ -67,7 +66,7 @@ function ControlPanel(props) {
                 max={SIZE}
                 min="1"
                 className="form-control"
-                onChange={handleInputChange}
+                onChange={useInputChange}
             />
             <input
                 type="number"
@@ -75,7 +74,7 @@ function ControlPanel(props) {
                 min="1"
                 name="colEnd"
                 className="form-control"
-                onChange={handleInputChange}
+                onChange={useInputChange}
             />
             <input
                 type="number"
@@ -83,7 +82,7 @@ function ControlPanel(props) {
                 min="1"
                 name="rowStart"
                 className="form-control"
-                onChange={handleInputChange}
+                onChange={useInputChange}
             />
             <input
                 type="number"
@@ -91,7 +90,7 @@ function ControlPanel(props) {
                 min="1"
                 name="rowEnd"
                 className="form-control"
-                onChange={handleInputChange}
+                onChange={useInputChange}
             />
             <button
                 onClick={handleSubmit}
