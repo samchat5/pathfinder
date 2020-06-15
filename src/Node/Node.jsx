@@ -4,21 +4,24 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./Node.css";
 
-class Node extends React.PureComponent {
-    renderNode() {
-        const {
-            name,
-            isPath,
-            isWall,
-            onMouseDown,
-            onMouseUp,
-            row,
-            col,
-            onMouseEnter,
-            isVisited,
-        } = this.props;
-        const wall = isWall ? "wall" : "";
-        const visited = isVisited ? "visited" : "";
+function Node(props) {
+    const {
+        name,
+        isPath,
+        isWall,
+        onMouseDown,
+        onMouseUp,
+        row,
+        col,
+        onMouseEnter,
+        isVisited,
+        isTarget,
+        isStart,
+    } = props;
+    const wall = isWall ? "wall" : "";
+    const visited = isVisited ? "visited" : "";
+
+    const renderNode = () => {
         return (
             <div
                 tabIndex="0"
@@ -30,22 +33,9 @@ class Node extends React.PureComponent {
                 onMouseEnter={() => onMouseEnter(row, col)}
             />
         );
-    }
+    };
 
-    renderStart() {
-        const {
-            name,
-            isPath,
-            isWall,
-            onMouseDown,
-            onMouseUp,
-            row,
-            col,
-            onMouseEnter,
-            isVisited,
-        } = this.props;
-        const wall = isWall ? "wall" : "";
-        const visited = isVisited ? "" : "";
+    const renderStart = () => {
         return (
             <div
                 tabIndex="0"
@@ -75,22 +65,9 @@ class Node extends React.PureComponent {
                 </svg>
             </div>
         );
-    }
+    };
 
-    renderTarget() {
-        const {
-            name,
-            isPath,
-            isWall,
-            onMouseDown,
-            onMouseUp,
-            row,
-            col,
-            onMouseEnter,
-            isVisited,
-        } = this.props;
-        const wall = isWall ? "wall" : "";
-        const visited = isVisited ? "" : "";
+    const renderTarget = () => {
         return (
             <div
                 tabIndex="0"
@@ -125,18 +102,15 @@ class Node extends React.PureComponent {
                 </svg>
             </div>
         );
-    }
+    };
 
-    render() {
-        const { isTarget, isStart } = this.props;
-        if (isTarget) {
-            return this.renderTarget();
-        }
-        if (isStart) {
-            return this.renderStart();
-        }
-        return this.renderNode();
+    if (isTarget) {
+        return renderTarget();
     }
+    if (isStart) {
+        return renderStart();
+    }
+    return renderNode();
 }
 
 Node.propTypes = {
