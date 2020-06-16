@@ -251,7 +251,7 @@ function App(): JSX.Element {
     };
 
     return (
-        <div className="App container">
+        <div className="container-fullwidth">
             <ControlPanel
                 isButtonDisabled={isButtonDisabled}
                 visualize={useVisualize}
