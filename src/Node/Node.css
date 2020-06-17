@@ -37,9 +37,6 @@
 
 .wall {
     background-color: #264653;
-    animation-name: node;
-    animation-duration: 0.2s;
-    animation-timing-function: ease-in;
 }
 
 .visited {

@@ -10,6 +10,7 @@ function ControlPanel(
     const [colEnd, setColEnd] = useState(SIZE - 1);
     const [rowStart, setRowStart] = useState(2);
     const [rowEnd, setRowEnd] = useState(SIZE - 1);
+    const [alogrithm, setAlgorithm] = useState("Dijkstra's");
 
     const {
         changeStart,
@@ -19,6 +20,7 @@ function ControlPanel(
         generateGrid,
         generateGridDisabled,
         resetGrid,
+        changeAlgorithm,
     } = props;
 
     const useInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -59,6 +61,40 @@ function ControlPanel(
             className="navbar navbar-expand-lg navbar-dark bg-primary mt-0 mb-3 justify-content-between"
         >
             <h1 className="navbar-brand my-0 text-light">Pathfinder</h1>
+            <div className="dropdown show">
+                <button
+                    className="btn btn-primary dropdown-toggle"
+                    type="button"
+                    id="dropdownMenu"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    {alogrithm}
+                </button>
+                <div className="dropdown-menu" aria-labelledby="dropdownMenu">
+                    <button
+                        className="dropdown-item"
+                        type="button"
+                        onClick={(e): void => {
+                            setAlgorithm(e.currentTarget.innerHTML);
+                            changeAlgorithm(e.currentTarget.innerHTML);
+                        }}
+                    >
+                        Dijkstra&apos;s
+                    </button>
+                    <button
+                        className="dropdown-item"
+                        type="button"
+                        onClick={(e): void => {
+                            setAlgorithm(e.currentTarget.innerHTML);
+                            changeAlgorithm(e.currentTarget.innerHTML);
+                        }}
+                    >
+                        A* (Manhattan Heuristic)
+                    </button>
+                </div>
+            </div>
             <form className="form-inline input-group">
                 <input
                     type="number"
@@ -132,6 +168,7 @@ ControlPanel.propTypes = {
     generateGrid: PropTypes.func.isRequired,
     generateGridDisabled: PropTypes.bool.isRequired,
     resetGrid: PropTypes.func.isRequired,
+    changeAlgorithm: PropTypes.func.isRequired,
 };
 
 export default ControlPanel;

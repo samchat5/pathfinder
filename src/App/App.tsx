@@ -6,6 +6,7 @@ import ControlPanel from "../ControlPanel/ControlPanel";
 import gridGenerator from "../util/gridGenerator";
 import GridContainer from "../GridContainer/GridContainer";
 import Node from "../NodeInterface";
+import aStar from "../util/astar";
 
 const SIZE = 31;
 
@@ -52,12 +53,20 @@ function App(): JSX.Element {
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [generateGridDisabled, setGenerateGridDisabled] = useState(false);
     const [, forceUpdate] = useReducer((x) => x + 1, 0);
+    const [algrorithm, setAlgroithm] = useState("Dijkstra's");
     const gridRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const newNodes = getInitialNodes();
         setNodes(newNodes);
     }, []);
+
+    const chooseAlgo = (): typeof dijkstras => {
+        if (algrorithm === "Dijkstra's") {
+            return dijkstras;
+        }
+        return aStar;
+    };
 
     // Removes all target nodes from the node array and chagnes it to the given cell
     const changeTarget = (colEnd: number, rowEnd: number): void => {
@@ -167,7 +176,8 @@ function App(): JSX.Element {
         // First, remove all visited nodes from the current grid
         setNodes(removeVisited());
         const graph = toGraph(nodes);
-        const [path, visited] = dijkstras(
+        const algo = chooseAlgo();
+        const [path, visited] = algo(
             graph,
             `col${colStart}row${rowStart}`,
             `col${colEnd}row${rowEnd}`
@@ -260,6 +270,7 @@ function App(): JSX.Element {
                 generateGrid={generateGrid}
                 generateGridDisabled={generateGridDisabled}
                 resetGrid={resetGrid}
+                changeAlgorithm={setAlgroithm}
             />
             <GridContainer
                 onMouseEnter={handleOnMouseEnter}
